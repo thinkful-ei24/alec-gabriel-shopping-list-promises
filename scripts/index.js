@@ -8,8 +8,9 @@ $(document).ready(function() {
 
   // const allItems = api.getItem();
   // console.log(allItems);
-  api.getItems(items => {
-    items.forEach(item => store.addItem(item));
-    shoppingList.render();
+  api.getItems()
+    .then(items=>{
+      items.forEach(item => store.addItem(item));
+      shoppingList.render();
   });
 });

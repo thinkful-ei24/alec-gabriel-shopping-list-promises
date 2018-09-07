@@ -120,11 +120,11 @@ const shoppingList = (function() {
   function handleDeleteItemClicked() {
     $('.js-shopping-list').on('click', '.js-item-delete', event => {
       const id = getItemIdFromElement(event.currentTarget);
-
-      api.deleteItem(id, () => {
-        store.findAndDelete(id);
-        render();
-      });
+      api.deleteItem(id)
+      .then(()=>{
+         store.findAndDelete(id);
+         render();
+       });
     });
   }
 

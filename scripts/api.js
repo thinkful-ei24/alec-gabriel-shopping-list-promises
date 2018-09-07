@@ -1,9 +1,9 @@
 const api = (function() {
   const BASE_URL = 'https://thinkful-list-api.herokuapp.com/richie';
 
-  const getItems = function(callback) {
+  const getItems = function() {
     //remove the callback here
-    $.getJSON(BASE_URL + '/items', callback);
+    return $.getJSON(BASE_URL + '/items');
   };
 
   const createItem = function(name) {
@@ -27,11 +27,10 @@ const api = (function() {
     });
   };
 
-  const deleteItem = function(id, callback) {
-    $.ajax({
+  const deleteItem = function(id) {
+    return $.ajax({
       url: BASE_URL + '/items/' + id,
-      method: 'DELETE',
-      success: callback
+      method: 'DELETE'
     });
   };
 
