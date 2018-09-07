@@ -105,14 +105,19 @@ const shoppingList = (function() {
       //   store.findAndUpdate(id, { checked: !item.checked });
       //   render();
       // });
+      console.log(`item checked: ${item.checked}`);
+      const checkedProp = { checked: !item.checked };
+      console.log(`current status: ${checkedProp.checked}`);
       console.log(item);
       api
-        .updateItem(id, { checked: !item.checked })
-        .then(item => {
-          console.log(item);
-          store.findAndUpdate(id, { checked: !item.checked });
+        .updateItem(id, checkedProp)
+        .then(() => {
+          console.log('first then');
+          store.findAndUpdate(id, checkedProp);
+          console.log('second then');
           render();
         })
+        .then(() => {})
         .catch(err => console.log(err));
     });
   }
