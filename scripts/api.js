@@ -6,25 +6,24 @@ const api = (function() {
     $.getJSON(BASE_URL + '/items', callback);
   };
 
-  const createItem = function(name, onSuccess, onError) {
+  const createItem = function(name) {
     const newItem = JSON.stringify({ name });
-    $.ajax({
+    return $.ajax({
       url: BASE_URL + '/items',
       method: 'POST',
       contentType: 'application/json',
-      data: newItem,
-      success: onSuccess,
-      error: onError
+      data: newItem
+      // success: onSuccess,
+      // error: onError
     });
   };
 
-  const updateItem = function(id, updateData, callback) {
-    $.ajax({
+  const updateItem = function(id, updateData) {
+    return $.ajax({
       url: BASE_URL + '/items/' + id,
       method: 'PATCH',
       contentType: 'application/json',
-      data: JSON.stringify(updateData),
-      success: callback
+      data: JSON.stringify(updateData)
     });
   };
 

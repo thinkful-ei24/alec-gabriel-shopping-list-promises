@@ -1,8 +1,7 @@
 /* global store, api */
 
 // eslint-disable-next-line no-unused-vars
-const shoppingList = (function(){
-
+const shoppingList = (function() {
   function generateError(err) {
     let message = '';
     if (err.responseJSON && err.responseJSON.message) {
@@ -20,7 +19,9 @@ const shoppingList = (function(){
   }
 
   function generateItemElement(item) {
-    let itemTitle = `<span class="shopping-item shopping-item__checked">${item.name}</span>`;
+    let itemTitle = `<span class="shopping-item shopping-item__checked">${
+      item.name
+    }</span>`;
     if (!item.checked) {
       itemTitle = `
         <form class="js-edit-item">
@@ -28,7 +29,7 @@ const shoppingList = (function(){
         </form>
       `;
     }
-  
+
     return `
       <li class="js-item-element" data-item-id="${item.id}">
         ${itemTitle}
@@ -42,14 +43,12 @@ const shoppingList = (function(){
         </div>
       </li>`;
   }
-  
-  
+
   function generateShoppingItemsString(shoppingList) {
-    const items = shoppingList.map((item) => generateItemElement(item));
+    const items = shoppingList.map(item => generateItemElement(item));
     return items.join('');
   }
-  
-  
+
   function render() {
     if (store.error) {
       const el = generateError(store.error);
@@ -63,57 +62,61 @@ const shoppingList = (function(){
     if (store.hideCheckedItems) {
       items = store.items.filter(item => !item.checked);
     }
-  
+
     // Filter item list if store prop `searchTerm` is not empty
     if (store.searchTerm) {
       items = store.items.filter(item => item.name.includes(store.searchTerm));
     }
-  
+
     // render the shopping list in the DOM
     console.log('`render` ran');
     const shoppingListItemsString = generateShoppingItemsString(items);
-  
+
     // insert that HTML into the DOM
     $('.js-shopping-list').html(shoppingListItemsString);
   }
-  
-  
+
   function handleNewItemSubmit() {
-    $('#js-shopping-list-form').submit(function (event) {
+    $('#js-shopping-list-form').submit(function(event) {
       event.preventDefault();
       const newItemName = $('.js-shopping-list-entry').val();
       $('.js-shopping-list-entry').val('');
-      api.createItem(newItemName, 
-        (newItem) => {
+      api
+        .createItem(newItemName)
+        .then(newItem => {
           store.addItem(newItem);
           render();
-        },
-        (err) => {
-          console.log(err);
-          store.setError(err);
-          render();
-        }
-      );
+        })
+        .catch(err => console.error(err));
     });
   }
-  
+
   function getItemIdFromElement(item) {
     return $(item)
       .closest('.js-item-element')
       .data('item-id');
   }
-  
+
   function handleItemCheckClicked() {
     $('.js-shopping-list').on('click', '.js-item-toggle', event => {
       const id = getItemIdFromElement(event.currentTarget);
       const item = store.findById(id);
-      api.updateItem(id, { checked: !item.checked }, () => {
-        store.findAndUpdate(id, { checked: !item.checked });
-        render();
-      });
+      // api.updateItem(id, { checked: !item.checked }, () => {
+      //   store.findAndUpdate(id, { checked: !item.checked });
+      //   render();
+      // });
+      console.log(item);
+      api
+        .updateItem(id, { checked: !item.checked })
+        .then(item => {
+          console.log(item);
+          store.findAndUpdate(id, { checked: !item.checked });
+          render();
+        })
+        .catch(err => console.log(err));
     });
   }
-  
+
   function handleDeleteItemClicked() {
     $('.js-shopping-list').on('click', '.js-item-delete', event => {
       const id = getItemIdFromElement(event.currentTarget);
@@ -124,26 +127,28 @@ const shoppingList = (function(){
       });
     });
   }
-  
+
   function handleEditShoppingItemSubmit() {
     $('.js-shopping-list').on('submit', '.js-edit-item', event => {
       event.preventDefault();
       const id = getItemIdFromElement(event.currentTarget);
-      const itemName = $(event.currentTarget).find('.shopping-item').val();
+      const itemName = $(event.currentTarget)
+        .find('.shopping-item')
+        .val();
       api.updateItem(id, { name: itemName }, () => {
         store.findAndUpdate(id, { name: itemName });
         render();
       });
     });
   }
-  
+
   function handleToggleFilterClick() {
     $('.js-filter-checked').click(() => {
       store.toggleCheckedFilter();
       render();
     });
   }
-  
+
   function handleShoppingListSearch() {
     $('.js-shopping-list-search-entry').on('keyup', event => {
       const val = $(event.currentTarget).val();
@@ -158,7 +163,7 @@ const shoppingList = (function(){
       render();
     });
   }
-  
+
   function bindEventListeners() {
     handleNewItemSubmit();
     handleItemCheckClicked();
@@ -172,6 +177,6 @@ const shoppingList = (function(){
   // This object contains the only exposed methods from this module:
   return {
     render: render,
-    bindEventListeners: bindEventListeners,
+    bindEventListeners: bindEventListeners
   };
-}());
+})();

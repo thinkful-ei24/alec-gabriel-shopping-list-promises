@@ -5,9 +5,11 @@ $(document).ready(function() {
   shoppingList.render();
 
   // handle this without a callback using .then as a promsie
-  api.getItems((items) => {
-    items.forEach((item) => store.addItem(item));
+
+  // const allItems = api.getItem();
+  // console.log(allItems);
+  api.getItems(items => {
+    items.forEach(item => store.addItem(item));
     shoppingList.render();
   });
 });
-
